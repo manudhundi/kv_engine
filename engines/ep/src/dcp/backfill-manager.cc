@@ -92,8 +92,8 @@ BackfillManager::BackfillManager(EventuallyPersistentEngine& e)
 
     scanBuffer.bytesRead = 0;
     scanBuffer.itemsRead = 0;
-    scanBuffer.maxBytes = config.getDcpScanByteLimit();
-    scanBuffer.maxItems = config.getDcpScanItemLimit();
+    scanBuffer.maxBytes = std::numeric_limits<size_t>::max();//config.getDcpScanByteLimit();
+    scanBuffer.maxItems = std::numeric_limits<size_t>::max(); //config.getDcpScanItemLimit();
 
     buffer.bytesRead = 0;
     buffer.maxBytes = config.getDcpBackfillByteLimit();
@@ -304,7 +304,7 @@ backfill_status_t BackfillManager::backfill() {
 
     switch (status) {
         case backfill_success:
-            activeBackfills.push_back(std::move(backfill));
+            activeBackfills.push_front(std::move(backfill));
             break;
         case backfill_finished:
             lh.unlock();
